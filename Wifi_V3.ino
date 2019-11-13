@@ -1,17 +1,19 @@
 /*
-Equivalencia das saidas Digitais entre NodeMCU e ESP8266 (na IDE do Arduino)
-NodeMCU - ESP8266
-D0 = 16;
-D1 = 5;
-D2 = 4;
-D3 = 0;
-D4 = 2;
-D5 = 14;
-D6 = 12;
-D7 = 13;
-D8 = 15;
-D9 = 3;
-D10 = 1;
+ *
+Projeto de Gestão de Energia e Eficincia Energética do Campus da UFPA
+Coordenadora: Profa. Carminda Célia Moura de Moura Carvalho
+Orientador: Prof. Me. Antonio Roniel Marques de Sousa
+Frente 5: Automação
+Grupo de Trabalho Frente 5 : 
+                              - Denis Monteiro - Graduação
+                              - Elen Priscila de Souza Lobato - Graduação
+                              - Jonathan Muñoz Tabora - Mestrado
+
+Baseado no Código: https://github.com/fabianodc/IoT/blob/master/relemqtt/relemqtt.ino
+Autores deste Código: Priscila Lobato
+Descrição: Código de programação para o NodeMCU ESP8266 ou ESP32 para realizar o controle de relés via WiFi
+Versão:3
+
 */
 
 #include <FS.h>                 //Esta precisa ser a primeira referência, ou nada dará certo e sua vida será arruinada. kkk
@@ -25,28 +27,32 @@ D10 = 1;
 
 #define DEBUG                   //Se descomentar esta linha vai habilitar a 'impressão' na porta serial
 
-//Coloque os valores padrões aqui, porém na interface eles poderão ser substituídos.
-#define servidor_mqtt             "tailor.cloudmqtt.com"  //URL do servidor MQTT  //////////////////////////////////////////////////////////////////////////////////////////
-#define servidor_mqtt_porta       "17711"  //Porta do servidor (a mesma deve ser informada na variável abaixo) //////////////////////////////////////////////////////////
-#define servidor_mqtt_usuario     "khkcilvq"  //Usuário /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#define servidor_mqtt_senha       "vnraLRQzakwH"  //Senha ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#define mqtt_topico_sub           "ceamazon/lcade"    //Tópico para subscrever o comando a ser dado no pino declarado abaixo ////////////////////////////////////////////
+//Coloque os valores padrões das CloudMQTT. Tais valores poderão ser substituídos posteriormente em caso alteração.
+#define servidor_mqtt             "tailor.cloudmqtt.com"        //URL do servidor da CloudMQTT 
+#define servidor_mqtt_porta       "17711"                       //Porta do servidor da CloudMQTT
+#define servidor_mqtt_usuario     "khkcilvq"                    //Usuário do servidor da CloudMQTT
+#define servidor_mqtt_senha       "vnraLRQzakwH"                //Senha do servidor da CloudMQTT
+#define mqtt_topico_sub           "ceamazon/lcade"              //Tópico para subscrever ou assinar do servidor da CloudMQTT
 
-//Declaração do pino que será utilizado e a memória alocada para armazenar o status deste pino na EEPROM
-#define pino1                      13                   //Pino que executara a acao dado no topico "esp8266/pincmd" e terá seu status informado no tópico "esp8266/pinstatus"
-#define pino2                      12
+
+//Declaração do pino que serão utilizados
+#define pino1                      13                 
 #define pino3                      14 
 #define pino4                      16
 #define pino5                      5
 #define pino6                      4 
 #define pino7                      2 
 #define pino8                      15 
-#define memoria_alocada            127                  //Define o quanto sera alocado na EEPROM (valores entre 4 e 4096 bytes)
+
+
+// Memória alocada para armazenar o status deste pino na EEPROM
+#define memoria_alocada            127                //Define o quanto sera alocado na EEPROM (valores entre 4 e 4096 bytes)
 
 WiFiClient espClient;                                 //Instância do WiFiClient
 PubSubClient client(espClient);                       //Passando a instância do WiFiClient para a instância do PubSubClient
 
-uint8_t statusAnt   =              0;                  //Variável que armazenará o status do pino que foi gravado anteriormente na EEPROM
+//Variáveis que armazenam o status dos pinos foram gravados anteriormente na EEPROM
+uint8_t statusAnt   =              0;                  
 uint8_t statusAnt2   =             0;
 uint8_t statusAnt3   =             0;
 uint8_t statusAnt4   =             0;
@@ -54,9 +60,11 @@ uint8_t statusAnt5   =             0;
 uint8_t statusAnt6   =             0;
 uint8_t statusAnt7   =             0;
 uint8_t statusAnt8   =             0;
-bool precisaSalvar  =             false;              //Flag para salvar os dados
 
-//Função para imprimir na porta serial
+//Flag para salvar os dados
+bool precisaSalvar  =             false;
+
+//Função para imprimir na porta serial da IDE do Arduino
 void imprimirSerial(bool linha, String mensagem){
   #ifdef DEBUG
     if(linha){
@@ -73,16 +81,16 @@ void precisaSalvarCallback() {
   precisaSalvar = true;
 }
 
-//Função que reconecta ao servidor MQTT
+//Função que reconecta ao servidor da CloudMQTT
 void reconectar() {
   //Repete até conectar
   while (!client.connected()) {
-    imprimirSerial(false, "Tentando conectar ao servidor MQTT...");
+    imprimirSerial(false, "Tentando conectar ao servidor da CloudMQTT...");
     
     //Tentativa de conectar. Se o MQTT precisa de autenticação, será chamada a função com autenticação, caso contrário, chama a sem autenticação. 
     bool conectado = strlen(servidor_mqtt_usuario) > 0 ?
-                     client.connect("ESP8266Client", servidor_mqtt_usuario, servidor_mqtt_senha) :
-                     client.connect("ESP8266Client");
+                     client.connect("ESPCEAMAZONLCADE", servidor_mqtt_usuario, servidor_mqtt_senha) :
+                     client.connect("ESPCEAMAZONLCADE");
 
     if(conectado) {
       imprimirSerial(true, "Conectado!");
@@ -101,7 +109,7 @@ void reconectar() {
 //Função que verifica qual foi o último status do pino antes do ESP ser desligado
 void lerStatusAnteriorPino(){
   EEPROM.begin(memoria_alocada);  //Aloca o espaco definido na memoria
-  statusAnt = EEPROM.read(0);     //Le o valor armazenado na EEPROM e passa para a variável "statusAnt"
+  statusAnt = EEPROM.read(0);     //Lê o valor armazenado na EEPROM e passa para a variável "statusAnt"
   statusAnt2 = EEPROM.read(1); 
   statusAnt3 = EEPROM.read(2); 
   statusAnt4 = EEPROM.read(3);
@@ -225,8 +233,9 @@ void gravarStatusPino8(uint8_t statusPino8){
    EEPROM.end();
 }
 
-//Função que será chamada ao receber mensagem do servidor MQTT
+//Função que será chamada ao receber mensagem do servidor da CloudMQTT
 void retorno(char* topico, byte* mensagem, unsigned int tamanho) {
+  
   //Convertendo a mensagem recebida para string
   mensagem[tamanho] = '\0';
   String strMensagem = String((char*)mensagem);
@@ -245,169 +254,133 @@ void retorno(char* topico, byte* mensagem, unsigned int tamanho) {
     imprimirSerial(true, "Colocando o pino em stado ALTO...");
   
     digitalWrite(pino1, HIGH);            
-   //digitalWrite(pino, HIGH);
     client.publish(mqtt_topico_sub, "ligado1");
     gravarStatusPino(HIGH);
   
   
-  }else if(strMensagem == "desliga1"){
+  }
+  
+  else if(strMensagem == "desliga1"){
     imprimirSerial(true, "Colocando o pino em stado BAIXO...");
    
              
      digitalWrite(pino1, LOW);
-    //digitalWrite(pino, LOW);
    client.publish(mqtt_topico_sub, "desligado1");
     gravarStatusPino(LOW);
   }
 
-// else{
-   // imprimirSerial(true, "Trocando o estado do pino...");
-   // digitalWrite(pino1, !digitalRead(pino1));
-  // gravarStatusPino(digitalRead(pino1));
- // }
-
   if(strMensagem == "liga2"){
     imprimirSerial(true, "Colocando o pino em stado ALTO...");
   
-     digitalWrite(pino2, HIGH);           
-   //digitalWrite(pino, HIGH);
+     digitalWrite(pino2, HIGH);
    client.publish(mqtt_topico_sub, "ligado2");
     gravarStatusPino2(HIGH);
-  }else if(strMensagem == "desliga2"){
+  }
+  
+  else if(strMensagem == "desliga2"){
     imprimirSerial(true, "Colocando o pino em stado BAIXO...");
    
              
      digitalWrite(pino2, LOW);
-    //digitalWrite(pino, LOW);
     client.publish(mqtt_topico_sub, "desligado2");
     gravarStatusPino2(LOW);
   }
   
- // else{
-  //  imprimirSerial(true, "Trocando o estado do pino...");
-   // digitalWrite(pino2, !digitalRead(pino2));
-  //  gravarStatusPino2(digitalRead(pino2));
- // }
   
    if(strMensagem == "liga3"){
     imprimirSerial(true, "Colocando o pino em stado ALTO...");
   
      digitalWrite(pino3, HIGH);            
-   //digitalWrite(pino, HIGH);
     client.publish(mqtt_topico_sub, "ligado3");
     gravarStatusPino3(HIGH);
-  }else if(strMensagem == "desliga3"){
+  }
+  
+  else if(strMensagem == "desliga3"){
     imprimirSerial(true, "Colocando o pino em stado BAIXO...");
    
              
      digitalWrite(pino3, LOW); 
-    //digitalWrite(pino, LOW);
    client.publish(mqtt_topico_sub, "desligado3");
     gravarStatusPino3(LOW);
   }
   
- // else{
-   // imprimirSerial(true, "Trocando o estado do pino...");
-   /// digitalWrite(pino3, !digitalRead(pino3));
-   // gravarStatusPino3(digitalRead(pino3));
-  //}
    if(strMensagem == "liga4"){
     imprimirSerial(true, "Colocando o pino em stado ALTO...");
   
-     digitalWrite(pino4, HIGH);            
-   //digitalWrite(pino, HIGH);
+     digitalWrite(pino4, HIGH);
     client.publish(mqtt_topico_sub, "ligado4");
     gravarStatusPino4(HIGH);
-  }else if(strMensagem == "desliga4"){
+  }
+  
+  else if(strMensagem == "desliga4"){
     imprimirSerial(true, "Colocando o pino em stado BAIXO...");
    
              
-     digitalWrite(pino4, LOW); 
-    //digitalWrite(pino, LOW);
+     digitalWrite(pino4, LOW);
     client.publish(mqtt_topico_sub, "desligado4");
     gravarStatusPino4(LOW);
   }
   
-  //else{
-   // imprimirSerial(true, "Trocando o estado do pino...");
-   // digitalWrite(pino4, !digitalRead(pino4));
-   // gravarStatusPino4(digitalRead(pino4));
- // }
-
+  
   if(strMensagem == "liga5"){
     imprimirSerial(true, "Colocando o pino em stado ALTO...");
   
      digitalWrite(pino5, HIGH);            
-   //digitalWrite(pino, HIGH);
     client.publish(mqtt_topico_sub, "ligado5");
     gravarStatusPino5(HIGH);
-  }else if(strMensagem == "desliga5"){
+  }
+  
+  
+  else if(strMensagem == "desliga5"){
     imprimirSerial(true, "Colocando o pino em stado BAIXO...");
    
              
      digitalWrite(pino5, LOW); 
-    //digitalWrite(pino, LOW);
    client.publish(mqtt_topico_sub, "desligado5");
     gravarStatusPino5(LOW);
   }
   
-  //else{
-  //  imprimirSerial(true, "Trocando o estado do pino...");
-   // digitalWrite(pino5, !digitalRead(pino5));
-   // gravarStatusPino5(digitalRead(pino5));
- //}
-
+  
 if(strMensagem == "liga6"){
     imprimirSerial(true, "Colocando o pino em stado ALTO...");
   
-     digitalWrite(pino6, HIGH);            
-   //digitalWrite(pino, HIGH);
+     digitalWrite(pino6, HIGH);
    client.publish(mqtt_topico_sub, "ligado6");
     gravarStatusPino6(HIGH);
-  }else if(strMensagem == "desliga6"){
+  }
+  
+  else if(strMensagem == "desliga6"){
     imprimirSerial(true, "Colocando o pino em stado BAIXO...");
    
              
-     digitalWrite(pino6, LOW); 
-    //digitalWrite(pino, LOW);
+     digitalWrite(pino6, LOW);
     client.publish(mqtt_topico_sub, "desligado6");
     gravarStatusPino6(LOW);
   }
   
- // else{
-  //  imprimirSerial(true, "Trocando o estado do pino...");
-   // digitalWrite(pino6, !digitalRead(pino6));
-   // gravarStatusPino6(digitalRead(pino6));
-  //}
-
+ 
 if(strMensagem == "liga7"){
     imprimirSerial(true, "Colocando o pino em stado ALTO...");
   
      digitalWrite(pino7, HIGH);            
-   //digitalWrite(pino, HIGH);
     client.publish(mqtt_topico_sub, "ligado7");
     gravarStatusPino7(HIGH);
-  }else if(strMensagem == "desliga7"){
+  }
+  
+  else if(strMensagem == "desliga7"){
     imprimirSerial(true, "Colocando o pino em stado BAIXO...");
    
              
      digitalWrite(pino7, LOW); 
-    //digitalWrite(pino, LOW);
    client.publish(mqtt_topico_sub, "desligado7");
     gravarStatusPino7(LOW);
   }
   
- // else{
-  //  imprimirSerial(true, "Trocando o estado do pino...");
-   // digitalWrite(pino7, !digitalRead(pino7));
-   // gravarStatusPino7(digitalRead(pino7));
-  //}
-
+ 
 if(strMensagem == "liga8"){
     imprimirSerial(true, "Colocando o pino em stado ALTO...");
   
      digitalWrite(pino8, HIGH);            
-   //digitalWrite(pino, HIGH);
    client.publish(mqtt_topico_sub, "ligado8");
     gravarStatusPino8(HIGH);
   }else if(strMensagem == "desliga8"){
@@ -415,21 +388,13 @@ if(strMensagem == "liga8"){
    
              
      digitalWrite(pino8, LOW); 
-    //digitalWrite(pino, LOW);
    client.publish(mqtt_topico_sub, "desligado8");
     gravarStatusPino8(LOW);
   }
   
-  //else{
-   // imprimirSerial(true, "Trocando o estado do pino...");
-  //  digitalWrite(pino8, !digitalRead(pino8));
-   // gravarStatusPino8(digitalRead(pino8));
-  //}
-
+    
   
-
-  
-  
+// Imprimi no monitor o status de todos os pinos após processar o comando
   
   imprimirSerial(false, "Status do pino depois de processar o comando: ");
   imprimirSerial(true, String(digitalRead(pino1)).c_str());
@@ -440,6 +405,7 @@ if(strMensagem == "liga8"){
   imprimirSerial(true, String(digitalRead(pino6)).c_str());
   imprimirSerial(true, String(digitalRead(pino7)).c_str());
   imprimirSerial(true, String(digitalRead(pino8)).c_str());
+  
 }
 
 
@@ -447,12 +413,13 @@ if(strMensagem == "liga8"){
 
 //Função inicial (será executado SOMENTE quando ligar o ESP)
 void setup() {
+  
   #ifdef DEBUG
     Serial.begin(115200);
   #endif
   imprimirSerial(true, "...");
 
-
+//Fazendo os pinos serem saída, pois eles irão "controlar" algo. E colocando todos os pinos em estado lógico baixo "LOW"
   pinMode(12, OUTPUT);
   digitalWrite(12, LOW);    
    
@@ -478,11 +445,9 @@ void setup() {
   digitalWrite(2, LOW);    
   
   
-  //Fazendo o pino ser de saída, pois ele irá "controlar" algo.
- // pinMode(pino, OUTPUT);
   
   //Formatando a memória interna
-  //(descomente a linha abaixo enquanto estiver testando e comente ou apague quando estiver pronto)
+  //Descomente a linha abaixo enquanto estiver testando e comente ou apague quando estiver pronto)
   //SPIFFS.format();
 
   //Iniciando o SPIFSS (SPI Flash File System)
