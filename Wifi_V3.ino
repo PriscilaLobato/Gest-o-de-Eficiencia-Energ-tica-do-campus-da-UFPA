@@ -17,13 +17,25 @@ Versão:3
 */
 
 #include <FS.h>                 //Esta precisa ser a primeira referência, ou nada dará certo e sua vida será arruinada. kkk
-#include <ESP8266WiFi.h>        //https://github.com/esp8266/Arduino
 #include <DNSServer.h>
-#include <ESP8266WebServer.h>
 #include <WiFiManager.h>        //https://github.com/tzapu/WiFiManager
 #include <ArduinoJson.h>        //https://github.com/bblanchon/ArduinoJson
 #include <PubSubClient.h>
 #include <EEPROM.h>
+
+
+#if defined(ESP8266)
+#include <ESP8266WiFi.h>  //ESP8266 Core WiFi Library         
+#else
+#include <WiFi.h>      //ESP32 Core WiFi Library    
+#endif
+ 
+#if defined(ESP8266)
+#include <ESP8266WebServer.h> //Local WebServer used to serve the configuration portal
+#else
+#include <WebServer.h> //Local WebServer used to serve the configuration portal ( https://github.com/zhouhan0126/WebServer-esp32 )
+#endif
+
 
 #define DEBUG                   //Se descomentar esta linha vai habilitar a 'impressão' na porta serial
 
