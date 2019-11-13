@@ -36,13 +36,14 @@ Versão:3
 
 
 //Declaração do pino que serão utilizados
-#define pino1                      13                 
+#define pino1                      13                   //Pino que executara a acao dado no topico "esp8266/pincmd" e terá seu status informado no tópico "esp8266/pinstatus"
+#define pino2                      12
 #define pino3                      14 
 #define pino4                      16
 #define pino5                      5
 #define pino6                      4 
 #define pino7                      2 
-#define pino8                      15 
+#define pino8                      15
 
 
 // Memória alocada para armazenar o status deste pino na EEPROM
