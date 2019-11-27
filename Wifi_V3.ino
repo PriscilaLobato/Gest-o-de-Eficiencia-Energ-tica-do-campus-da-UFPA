@@ -56,6 +56,7 @@ Versão:3
 #define pino6                      12 
 #define pino7                      13 
 #define pino8                      15
+#define pino9                      16
 
 
 
@@ -112,10 +113,14 @@ void reconectar() {
       imprimirSerial(true, "Conectado!");
       //Subscreve para monitorar os comandos recebidos
       client.subscribe(mqtt_topico_sub, 1); //QoS 1
+      digitalWrite(pino9, LOW); 
+      
+      
     } else {
       imprimirSerial(false, "Falhou ao tentar conectar. Codigo: ");
       imprimirSerial(false, String(client.state()).c_str());
       imprimirSerial(true, " tentando novamente em 5 segundos");
+      digitalWrite(pino9, HIGH); 
       //Aguarda 5 segundos para tentar novamente
       delay(5000);
     }
