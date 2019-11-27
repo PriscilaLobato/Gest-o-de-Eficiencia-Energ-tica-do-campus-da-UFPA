@@ -59,6 +59,8 @@ Versão:3
 
 
 
+
+
 // Memória alocada para armazenar o status deste pino na EEPROM
 #define memoria_alocada            127                //Define o quanto sera alocado na EEPROM (valores entre 4 e 4096 bytes)
 
@@ -434,29 +436,29 @@ void setup() {
   imprimirSerial(true, "...");
 
 //Fazendo os pinos serem saída, pois eles irão "controlar" algo. E colocando todos os pinos em estado lógico baixo "LOW"
-  pinMode(12, OUTPUT);
-  digitalWrite(12, LOW);    
+  pinMode(pino1, OUTPUT);
+  digitalWrite(pino1, LOW);    
    
- pinMode(13, OUTPUT);
-  digitalWrite(13, LOW);    
+ pinMode(pino2, OUTPUT);
+  digitalWrite(pino2, LOW);    
    
-  pinMode(14, OUTPUT);
-  digitalWrite(14, LOW);      
+  pinMode(pino3, OUTPUT);
+  digitalWrite(pino3, LOW);      
    
-  pinMode(4, OUTPUT);
-  digitalWrite(4, LOW);    
+  pinMode(pino4, OUTPUT);
+  digitalWrite(pino4, LOW);    
    
-  pinMode(5, OUTPUT);
-  digitalWrite(5, LOW);    
+  pinMode(pino5, OUTPUT);
+  digitalWrite(pino5, LOW);    
    
- pinMode(15, OUTPUT);
-  digitalWrite(15, LOW);    
+ pinMode(pino6, OUTPUT);
+  digitalWrite(pino16, LOW);    
    
-  pinMode(16, OUTPUT);
-  digitalWrite(16, LOW);      
+  pinMode(pino7, OUTPUT);
+  digitalWrite(pino17, LOW);      
    
-  pinMode(2, OUTPUT);
-  digitalWrite(2, LOW);    
+  pinMode(pino8, OUTPUT);
+  digitalWrite(pino8, LOW);    
   
   
   
