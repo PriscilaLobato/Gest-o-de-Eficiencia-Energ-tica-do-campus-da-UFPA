@@ -452,7 +452,7 @@ void setup() {
   digitalWrite(pino5, LOW);    
    
  pinMode(pino6, OUTPUT);
-  digitalWrite(pino16, LOW);    
+  digitalWrite(pino6, LOW);    
    
   pinMode(pino7, OUTPUT);
   digitalWrite(pino17, LOW);      
