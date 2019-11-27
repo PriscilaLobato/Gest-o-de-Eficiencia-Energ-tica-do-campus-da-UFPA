@@ -455,7 +455,7 @@ void setup() {
   digitalWrite(pino6, LOW);    
    
   pinMode(pino7, OUTPUT);
-  digitalWrite(pino17, LOW);      
+  digitalWrite(pino7, LOW);      
    
   pinMode(pino8, OUTPUT);
   digitalWrite(pino8, LOW);    
