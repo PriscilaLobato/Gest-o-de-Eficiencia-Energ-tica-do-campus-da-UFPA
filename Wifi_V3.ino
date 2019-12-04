@@ -56,6 +56,10 @@ Versão:3
 #define pino6                      12 
 #define pino7                      13 
 #define pino8                      15
+#define pino9                      16
+
+
+
 
 
 // Memória alocada para armazenar o status deste pino na EEPROM
@@ -109,10 +113,14 @@ void reconectar() {
       imprimirSerial(true, "Conectado!");
       //Subscreve para monitorar os comandos recebidos
       client.subscribe(mqtt_topico_sub, 1); //QoS 1
+      digitalWrite(pino9, HIGH); 
+      
+      
     } else {
       imprimirSerial(false, "Falhou ao tentar conectar. Codigo: ");
       imprimirSerial(false, String(client.state()).c_str());
       imprimirSerial(true, " tentando novamente em 5 segundos");
+      digitalWrite(pino9, LOW);
       //Aguarda 5 segundos para tentar novamente
       delay(5000);
     }
@@ -433,29 +441,32 @@ void setup() {
   imprimirSerial(true, "...");
 
 //Fazendo os pinos serem saída, pois eles irão "controlar" algo. E colocando todos os pinos em estado lógico baixo "LOW"
-  pinMode(12, OUTPUT);
-  digitalWrite(12, LOW);    
+  pinMode(pino1, OUTPUT);
+  digitalWrite(pino1, LOW);    
    
- pinMode(13, OUTPUT);
-  digitalWrite(13, LOW);    
+ pinMode(pino2, OUTPUT);
+  digitalWrite(pino2, LOW);    
    
-  pinMode(14, OUTPUT);
-  digitalWrite(14, LOW);      
+  pinMode(pino3, OUTPUT);
+  digitalWrite(pino3, LOW);      
    
-  pinMode(4, OUTPUT);
-  digitalWrite(4, LOW);    
+  pinMode(pino4, OUTPUT);
+  digitalWrite(pino4, LOW);    
    
-  pinMode(5, OUTPUT);
-  digitalWrite(5, LOW);    
+  pinMode(pino5, OUTPUT);
+  digitalWrite(pino5, LOW);    
    
- pinMode(15, OUTPUT);
-  digitalWrite(15, LOW);    
+ pinMode(pino6, OUTPUT);
+  digitalWrite(pino6, LOW);    
    
-  pinMode(16, OUTPUT);
-  digitalWrite(16, LOW);      
+  pinMode(pino7, OUTPUT);
+  digitalWrite(pino7, LOW);      
    
-  pinMode(2, OUTPUT);
-  digitalWrite(2, LOW);    
+  pinMode(pino8, OUTPUT);
+  digitalWrite(pino8, LOW);  
+  
+  pinMode(pino9, OUTPUT);
+  digitalWrite(pino9, LOW);  
   
   
   
