@@ -113,14 +113,14 @@ void reconectar() {
       imprimirSerial(true, "Conectado!");
       //Subscreve para monitorar os comandos recebidos
       client.subscribe(mqtt_topico_sub, 1); //QoS 1
-      digitalWrite(pino9, LOW); 
+      digitalWrite(pino9, HIGH); 
       
       
     } else {
       imprimirSerial(false, "Falhou ao tentar conectar. Codigo: ");
       imprimirSerial(false, String(client.state()).c_str());
       imprimirSerial(true, " tentando novamente em 5 segundos");
-      digitalWrite(pino9, HIGH); 
+      digitalWrite(pino9, LOW);
       //Aguarda 5 segundos para tentar novamente
       delay(5000);
     }
@@ -463,7 +463,10 @@ void setup() {
   digitalWrite(pino7, LOW);      
    
   pinMode(pino8, OUTPUT);
-  digitalWrite(pino8, LOW);    
+  digitalWrite(pino8, LOW);  
+  
+  pinMode(pino9, OUTPUT);
+  digitalWrite(pino9, LOW);  
   
   
   
