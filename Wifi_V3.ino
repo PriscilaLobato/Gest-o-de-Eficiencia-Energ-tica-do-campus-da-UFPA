@@ -57,6 +57,7 @@ Versão:3
 #define pino7                      13 
 #define pino8                      15
 #define pino9                      16
+#define pino10                     3
 
 
 
@@ -468,6 +469,9 @@ void setup() {
   pinMode(pino9, OUTPUT);
   digitalWrite(pino9, LOW);  
   
+  pinMode(pino10, OUTPUT);
+  digitalWrite(pino10, LOW); 
+  
   
   
   //Formatando a memória interna
@@ -540,6 +544,7 @@ void setup() {
   //E entra em loop aguardando a configuração de uma rede WiFi válida.
   if (!wifiManager.autoConnect("AutoConnectAP", "senha123")) {
     imprimirSerial(true, "Falha ao conectar. Excedeu o tempo limite para conexao.");
+    digitalWrite(pino10, LOW);
     delay(3000);
     //Reinicia o ESP e tenta novamente ou entra em sono profundo (DeepSleep)
     ESP.reset();
@@ -548,6 +553,7 @@ void setup() {
 
   //Se chegou até aqui é porque conectou na WiFi!
   imprimirSerial(true, "Conectado!! :)");
+  digitalWrite(pino10, HIGH); 
 
   //Lendo os parâmetros atualizados
   strcpy(servidor_mqtt, custom_mqtt_server.getValue());
